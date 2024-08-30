@@ -3,10 +3,10 @@
 require_once(__DIR__ . '/settings.php');
 
 
-if(isset($_GET['ean'])) {
+if (isset($_GET['ean'])) {
   $ean = $_GET['ean'];
 } else {
-  exit ("EAN introuvable.");
+  exit("EAN introuvable.");
 }
 
 $sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
@@ -23,19 +23,38 @@ $articlesLignes = $articles->fetch();
 //var_dump($articlesLignes);
 
 if (count($articlesLignes) === 0) {
-  exit ("EAN introuvable.");
+  exit("EAN introuvable.");
+}
+
+
+
+function recupere_parametres_tab($pdo, $valeur, $paraTab)
+{
+  $requeteSQL = "SELECT * 
+FROM tab
+WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
+
+  $tab = $pdo->prepare($requeteSQL);
+  $tab->bindParam(':valeur', $valeur);
+  $tab->bindParam(':paraTab', $paraTab);
+  $tab->execute();
+  $tabLignes = $tab->fetch();
+  // var_dump($tabLignes);
+  return $tabLignes['libtab'];
 }
 
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./styles/style.css">
   <title>Recherche d'article - Plus d'informations</title>
 </head>
+
 <body>
   <div class="container">
     <div class="table-information-article1">
@@ -48,6 +67,18 @@ if (count($articlesLignes) === 0) {
           <tr>
             <th>Nom éditeur</th>
             <td><?php echo $articlesLignes['nomedi']; ?></td>
+          </tr>
+          <tr>
+            <th>Adresse éditeur 1</th>
+            <td><?php echo $articlesLignes['adres1']; ?></td>
+          </tr>
+          <tr>
+            <th>Adresse éditeur 2</th>
+            <td><?php echo $articlesLignes['adres2']; ?></td>
+          </tr>
+          <tr>
+            <th>Adresse éditeur 3</th>
+            <td><?php echo $articlesLignes['adres3']; ?></td>
           </tr>
           <tr>
             <th>EAN</th>
@@ -63,19 +94,8 @@ if (count($articlesLignes) === 0) {
           </tr>
           <tr>
             <th>Code famille</th>
-            <td><?php echo $articlesLignes['cdfam']; ?></td>
-          </tr>
-          <tr>
-            <th>Adresse éditeur 1</th>
-            <td><?php echo $articlesLignes['adres1'];?></td>
-          </tr>
-          <tr>
-            <th>Adresse éditeur 2</th>
-            <td><?php echo $articlesLignes['adres2'];?></td>
-          </tr>
-          <tr>
-            <th>Adresse éditeur 3</th>
-            <td><?php echo $articlesLignes['adres3']; ?></td>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdfam'], 'FAM');
+                echo '(' . $articlesLignes['cdfam'] . ') ' . $result; ?></td>
           </tr>
           <tr>
             <th>Prix</th>
@@ -83,7 +103,11 @@ if (count($articlesLignes) === 0) {
           </tr>
           <tr>
             <th>TVA</th>
-            <td><?php echo $articlesLignes['cdtva']; ?></td>
+            <td><?php
+                $result = recupere_parametres_tab($pdo, $articlesLignes['cdtva'], 'TVA');
+                echo $result;
+                ?>
+            </td>
           </tr>
           <tr>
             <th>Dernière mise à jour</th>
@@ -91,11 +115,13 @@ if (count($articlesLignes) === 0) {
           </tr>
           <tr>
             <th>Retour</th>
-            <td><?php if ($articlesLignes['auto_retour'] === 'O') {
-              echo 'Autorisé';
-            } elseif ($articlesLignes['auto_retour'] === 'I') {
-              echo 'Non autorisé';
-            } else echo 'Demande d\'autorisation du fournisseur'; ?></td>
+            <td><?php
+                if ($articlesLignes['auto_retour']) {
+                  echo recupere_parametres_tab($pdo, $articlesLignes['auto_retour'], 'ARE');
+                } else {
+                  echo '?';
+                }
+                ?></td>
           </tr>
         </tbody>
       </table>
@@ -103,7 +129,7 @@ if (count($articlesLignes) === 0) {
 
     <div class="table-information-article2">
       <table class="informations" border="2" cellpadding="10" cellspacing="4" style="text-align: center">
-      <tbody>
+        <tbody>
           <tr>
             <th>Match</th>
             <td><?php echo $articlesLignes['col_matchcli']; ?></td>
@@ -117,11 +143,11 @@ if (count($articlesLignes) === 0) {
             <td><?php echo $articlesLignes['nomcli']; ?></td>
           </tr>
           <th>Adresse fournisseur 1</th>
-            <td><?php echo $articlesLignes['cliadres1'];?></td>
+          <td><?php echo $articlesLignes['cliadres1']; ?></td>
           </tr>
           <tr>
             <th>Adresse fournisseur 2</th>
-            <td><?php echo $articlesLignes['cliadres2'];?></td>
+            <td><?php echo $articlesLignes['cliadres2']; ?></td>
           </tr>
           <tr>
             <th>Adresse fournisseur 3</th>
@@ -131,4 +157,5 @@ if (count($articlesLignes) === 0) {
     </div>
   </div>
 </body>
+
 </html>
