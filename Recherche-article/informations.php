@@ -9,7 +9,7 @@ if (isset($_GET['ean'])) {
   exit("EAN introuvable.");
 }
 
-$sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cdtrs, cdrgl, cdspe1, cdcat, cdnoi, cdmnq, cdtcl, cptcli, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
+$sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cdtrs, cdrgl, cdspe1, cdnoi, cdmnq, cdtcl, cptcli, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
 FROM art
 INNER JOIN edinew ON edinew.cdedi = art.cdedi
 LEFT JOIN art_complement ON art_complement.ean13 = :ean 
@@ -167,9 +167,9 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
             <td><?php echo $articlesLignes['nomcli']; ?></td>
           </tr>
           <tr>
-            <th>Catégorie client</th>
-            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdcat'], 'CAT');
-                echo  $articlesLignes['cdcat'] . $result; ?></td>
+            <th>Type client</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdtcl'], 'TCL');
+                echo  '(' . $articlesLignes['cdtcl'] . ') ' . $result; ?></td>
           </tr>
           <th>Adresse fournisseur 1</th>
           <td><?php echo $articlesLignes['cliadres1']; ?></td>
