@@ -9,7 +9,7 @@ if (isset($_GET['ean'])) {
   exit("EAN introuvable.");
 }
 
-$sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
+$sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cdtrs, cdrgl, cdspe1, cdcat, cdnoi, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
 FROM art
 INNER JOIN edinew ON edinew.cdedi = art.cdedi
 LEFT JOIN art_complement ON art_complement.ean13 = :ean 
@@ -30,6 +30,7 @@ if (count($articlesLignes) === 0) {
 
 function recupere_parametres_tab($pdo, $valeur, $paraTab)
 {
+
   $requeteSQL = "SELECT * 
 FROM tab
 WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
@@ -39,7 +40,9 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
   $tab->bindParam(':paraTab', $paraTab);
   $tab->execute();
   $tabLignes = $tab->fetch();
-  // var_dump($tabLignes);
+  if ($tab->rowCount() == 0) {
+    return "Aucune information";
+  }
   return $tabLignes['libtab'];
 }
 
@@ -119,7 +122,7 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
                 if ($articlesLignes['auto_retour']) {
                   echo recupere_parametres_tab($pdo, $articlesLignes['auto_retour'], 'ARE');
                 } else {
-                  echo '?';
+                  echo 'Non renseigné';
                 }
                 ?></td>
           </tr>
@@ -142,6 +145,11 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
             <th>Nom client</th>
             <td><?php echo $articlesLignes['nomcli']; ?></td>
           </tr>
+          <tr>
+            <th>Catégorie client</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdcat'], 'CAT');
+                echo  $articlesLignes['cdcat'] . $result; ?></td>
+          </tr>
           <th>Adresse fournisseur 1</th>
           <td><?php echo $articlesLignes['cliadres1']; ?></td>
           </tr>
@@ -152,6 +160,28 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
           <tr>
             <th>Adresse fournisseur 3</th>
             <td><?php echo $articlesLignes['cliadres3']; ?></td>
+          </tr>
+          <tr>
+            <th>Code transporteur</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdtrs'], 'COU');
+                echo '(' . $articlesLignes['cdtrs'] . ') ' . $result; ?></td>
+          </tr>
+          <tr>
+            <th>Règlement</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdrgl'], 'RGL');
+                echo '(' . $articlesLignes['cdrgl'] . ') ' . $result; ?></td>
+          </tr>
+          <tr>
+            <th>Spécialité</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdspe1'], 'SPE');
+                echo  $articlesLignes['cdspe1'] . $result;
+                ?></td>
+          <tr>
+            <th>Code noir</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdnoi'], 'NOI');
+                echo  $articlesLignes['cdnoi'] . $result;
+                ?></td>
+
           </tr>
       </table>
     </div>
