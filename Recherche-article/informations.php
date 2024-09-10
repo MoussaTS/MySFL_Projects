@@ -9,7 +9,7 @@ if (isset($_GET['ean'])) {
   exit("EAN introuvable.");
 }
 
-$sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cdtrs, cdrgl, cdspe1, cdcat, cdnoi, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
+$sql = "SELECT art.cdedi, art.ean13, titre, auteur, cdfam, pxpub, cdtva, art.dtdermaj, nomedi, edinew.adres1, edinew.adres2, edinew.adres3, auto_retour, cddis, col_matchcli, cdcli, nomcli, cdtrs, cdrgl, cdspe1, cdcat, cdnoi, cdmnq, cdtcl, cptcli, cli.adres1 as cliadres1, cli.adres2 as cliadres2, cli.adres3 as cliadres3
 FROM art
 INNER JOIN edinew ON edinew.cdedi = art.cdedi
 LEFT JOIN art_complement ON art_complement.ean13 = :ean 
@@ -25,7 +25,6 @@ $articlesLignes = $articles->fetch();
 if (count($articlesLignes) === 0) {
   exit("EAN introuvable.");
 }
-
 
 
 function recupere_parametres_tab($pdo, $valeur, $paraTab)
@@ -60,7 +59,7 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
 
 <body>
   <div class="container">
-    <div class="table-information-article1">
+    <div class="table-information-editeur">
       <table class="informations" border="2" cellpadding="10" cellspacing="4" style="text-align: center">
         <tbody>
           <tr>
@@ -83,27 +82,40 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
             <th>Adresse éditeur 3</th>
             <td><?php echo $articlesLignes['adres3']; ?></td>
           </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-information-article">
+      <table class="informations" border="2" cellpadding="10" cellspacing="4" style="text-align: center">
+        <tbody>
+
           <tr>
             <th>EAN</th>
             <td><?php echo $articlesLignes['ean13']; ?></td>
           </tr>
+
           <tr>
             <th>Titre</th>
             <td><?php echo $articlesLignes['titre']; ?></td>
           </tr>
+
           <tr>
             <th>Auteur</th>
             <td><?php echo $articlesLignes['auteur']; ?></td>
           </tr>
+
           <tr>
             <th>Code famille</th>
             <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdfam'], 'FAM');
                 echo '(' . $articlesLignes['cdfam'] . ') ' . $result; ?></td>
           </tr>
+
           <tr>
             <th>Prix</th>
             <td><?php echo $articlesLignes['pxpub'] . ' €'; ?></td>
           </tr>
+
           <tr>
             <th>TVA</th>
             <td><?php
@@ -112,10 +124,19 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
                 ?>
             </td>
           </tr>
+
           <tr>
             <th>Dernière mise à jour</th>
             <td><?php echo $articlesLignes['dtdermaj']; ?></td>
           </tr>
+
+          <tr>
+            <th>Disponibilité</th>
+            <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdmnq'], 'MNQ');
+                echo  $articlesLignes['cdnoi'] . $result;
+                ?></td>
+          </tr>
+
           <tr>
             <th>Retour</th>
             <td><?php
@@ -130,7 +151,7 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
       </table>
     </div>
 
-    <div class="table-information-article2">
+    <div class="table-information-fournisseur">
       <table class="informations" border="2" cellpadding="10" cellspacing="4" style="text-align: center">
         <tbody>
           <tr>
@@ -181,8 +202,17 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
             <td><?php $result = recupere_parametres_tab($pdo, $articlesLignes['cdnoi'], 'NOI');
                 echo  $articlesLignes['cdnoi'] . $result;
                 ?></td>
-
           </tr>
+          <tr>
+            <th>Code comptabilité</th>
+            <td><?php if ($articlesLignes['cdtcl'] == 'FO') {
+                  echo 'FA' . substr($articlesLignes['cptcli'], 1);
+                } else {
+                  echo 'AC' . substr($articlesLignes['cptcli'], 1);
+                }
+                ?></td>
+          </tr>
+
       </table>
     </div>
   </div>
