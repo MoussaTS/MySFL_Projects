@@ -1,13 +1,6 @@
 <?php
 
 require_once(__DIR__ . '/settings.php');
-// var_dump($_POST);
-
-// if(isset($_POST['search'])){
-//   $search = $_POST['search'];
-// }else{
-//   $search = '';
-// }
 
 $search = '';
 $sql = "SELECT art.cdedi, ean13, titre, auteur, cdfam, pxpub, cdtva, dtdermaj, nomedi, adres1, adres2, adres3
@@ -15,6 +8,7 @@ FROM art
 INNER JOIN edinew ON edinew.cdedi = art.cdedi
 WHERE ean13
 LIKE :search OR titre
+LIKE :search OR auteur
 LIKE :search OR art.cdedi
 LIKE :search";
 

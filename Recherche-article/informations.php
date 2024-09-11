@@ -58,13 +58,15 @@ WHERE tab.cdtab = :paraTab AND tab.cle1 = :valeur";
 </head>
 
 <body>
+  <h1>EAN : <?php echo $_GET['ean']; ?></h1>
+
   <div class="container">
     <div class="table-information-editeur">
       <table class="informations" border="2" cellpadding="10" cellspacing="4" style="text-align: center">
         <tbody>
           <tr>
             <th>Code éditeur</th>
-            <td><?php echo $articlesLignes['cdedi']; ?></td>
+            <td><a href="editeur.php?code-editeur=<?php echo $articlesLignes['cdedi'] ?>"><?php echo $articlesLignes['cdedi']; ?></a></td>
           </tr>
           <tr>
             <th>Nom éditeur</th>
