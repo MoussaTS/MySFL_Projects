@@ -1,0 +1,30 @@
+body {
+  background: rgb(255, 240, 240);
+}
+
+h1 {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+thead {
+  background: rgb(24, 23, 23);
+  color: white;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(24, 23, 23);
+}
+
+.ean:hover {
+  background: rgb(185, 176, 176);
+  color: white;
+}
+a:visited {
+  color: rgb(24, 23, 23);
+}

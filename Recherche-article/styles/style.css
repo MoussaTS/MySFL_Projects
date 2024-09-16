@@ -63,3 +63,7 @@ thead {
 a {
   text-decoration: none;
 }
+
+a:visited {
+  color: rgb(24, 23, 23);
+}
